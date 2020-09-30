@@ -3,45 +3,19 @@ import {
   LIST_LOAD_SUCCESS,
   LIST_LOAD_FAILURE,
 } from "./Report.types";
-import { AddressServiceImpl } from "../../../domain/usecases/AddressService";
-import { AddressRepositoryImpl } from "../../../data/repositories/AddressFirebaseRepositoryImpl";
+import { ReportService } from "../../../domain/usecases/ReportService";
+import { ReportFirebaseRepositoryImpl } from "../../../data/repositories/ReportFirebaseRepositoryImpl";
 
 export const refreshList = async (dispatch) => {
   dispatch({ type: LIST_LOAD_REQUEST });
-
   try {
-    const todoRepo = new AddressRepositoryImpl();
-    const itemService = new AddressServiceImpl(todoRepo);
-    const items = await itemService.GetAddress();
+    const todoRepo = new ReportFirebaseRepositoryImpl();
+    const itemService = new ReportService(todoRepo);
+    const items = await itemService.GetReport();
     dispatch({ type: LIST_LOAD_SUCCESS, payload: items });
   } catch (error) {
     dispatch({ type: LIST_LOAD_FAILURE, error });
   }
 };
 
-export const addAddress = async (payload) => {
-  const todoRepo = new AddressRepositoryImpl();
-  const itemService = new AddressServiceImpl(todoRepo);
-  await itemService.AddAddress(payload);
-  return { type: LIST_LOAD_SUCCESS, payload };
-};
 
-export const deleteAddress = async (id) => {
-  try {
-    const todoRepo = new AddressRepositoryImpl();
-    const todoService = new AddressServiceImpl(todoRepo);
-    await todoService.DeleteAddress(id);
-  } catch (error) {
-    alert(error);
-  }
-};
-
-export const UpdateAddress = async (todo) => {
-  try {
-    const todoRepo = new AddressRepositoryImpl();
-    const todoService = new AddressServiceImpl(todoRepo);
-    await todoService.UpdateAddress(todo);
-  } catch (error) {
-    alert(error);
-  }
-};

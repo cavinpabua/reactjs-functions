@@ -3,6 +3,8 @@ import { Provider } from "react-redux";
 import { createStore, combineReducers, applyMiddleware } from "redux";
 import thunk from "redux-thunk";
 import ItemList from "./app/pages/AddressBook/AddressBookList";
+import ReportList from "./app/pages/Report/ReportList";
+
 import ItemForm from "./app/pages/AddressBook/AddressBookForm";
 import items from "./app/pages/AddressBook/AddressBook.reducers";
 import { Layout, Row, Col, Menu } from "antd";
@@ -35,6 +37,15 @@ const App = () => {
                   <ItemList />
                   <br />
                   <ItemForm />
+                </Col>
+              </Row>
+            </Content>
+          </Route>
+          <Route path="/report" exact>
+            <Content style={{ marginTop: "100px", marginBottom: "100px" }}>
+              <Row justify="space-around">
+                <Col span={20} style={{ textAlign: "center" }}>
+                  <ReportList />
                 </Col>
               </Row>
             </Content>

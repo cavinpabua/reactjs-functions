@@ -39,27 +39,48 @@ functions.logger.log(snap.after.data());
         )
   }
   if (snap.before.exists  && snap.after.exists) {
-      let datas = snap.before.data()
-      let gender = datas.gender;
+      let datas_before = snap.before.data()
+      let datas_after = snap.after.data()
+      let genderBefore = datas_before.gender;
+      let genderAfter = datas_after.gender;
     return db.collection(REPORT_NAME).doc("genders").get()
         .then(docSnap=>{
-              if (gender === "Male") {
-                return docSnap.ref.update({
-                  male: docSnap.data().male  - 1 || 0
+               let docRef = docSnap.ref
+              if (genderBefore === "Male") {
+                docRef.update({
+                  'male': docSnap.data().male  - 1 || 0
                 })
-              } else if (gender === "Female") {
-                return docSnap.ref.update({
+              } else if (genderBefore === "Female") {
+                docRef.update({
                   female: docSnap.data().female - 1 || 0
                 })
-              } else if (gender === "Other") {
-                return docSnap.ref.update({
+              } else if (genderBefore === "Other") {
+                docRef.update({
                   other: docSnap.data().other - 1 || 0
                 })
               } else {
-                return docSnap.ref.update({
+                docRef.update({
                   unknown: docSnap.data().unknown - 1 || 0
                 })
               }
+                if (genderAfter === "Male") {
+                    docRef.update({
+                        'male': docSnap.data().male  + 1 || 0
+                    })
+                } else if (genderAfter === "Female") {
+                    docRef.update({
+                        female: docSnap.data().female + 1 || 0
+                    })
+                } else if (genderAfter === "Other") {
+                    docRef.update({
+                        other: docSnap.data().other + 1 || 0
+                    })
+                } else {
+                    docRef.update({
+                        unknown: docSnap.data().unknown + 1 || 0
+                    })
+                }
+                return docRef
             }
         )
   }

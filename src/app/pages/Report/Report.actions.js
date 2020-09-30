@@ -17,5 +17,3 @@ export const refreshList = async (dispatch) => {
     dispatch({ type: LIST_LOAD_FAILURE, error });
   }
 };
-
-

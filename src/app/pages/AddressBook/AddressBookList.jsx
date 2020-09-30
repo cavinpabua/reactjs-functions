@@ -1,9 +1,9 @@
 import React, { Component }  from "react";
 import { connect } from "react-redux";
 import { refreshList,deleteAddress,UpdateAddress } from "./AddressBook.actions";
-import {Table, Space, Button, Input, DatePicker, Modal} from "antd";
+import {Table, Space, Button, Input, DatePicker, Modal, Select} from "antd";
 import moment from "moment";
-
+const { Option } = Select;
 
 class AddressBookList extends Component {
 
@@ -19,7 +19,8 @@ class AddressBookList extends Component {
             age: 0,
             fullName: "",
             dob:"",
-            dateValue: ""
+            dateValue: "",
+            gender:""
         };
 
         this.handleClick = this.handleClick.bind(this);
@@ -30,6 +31,7 @@ class AddressBookList extends Component {
         this.handleOk = this.handleOk.bind(this);
         this.handleCancel = this.handleCancel.bind(this);
         this.handleChangeDate = this.handleChangeDate.bind(this);
+        this.handleChangeGender = this.handleChangeGender.bind(this);
     }
     componentDidMount() {
         this.props.refreshList();
@@ -58,14 +60,17 @@ class AddressBookList extends Component {
         this.setState({
             visible: true,
         });
-        this.setState({ firstName: item.firstName, middleName: item.middleName, lastName: item.lastName, dob:item.dob,dateValue: moment(item.dob), id:item.id });
+        this.setState({ firstName: item.firstName, middleName: item.middleName, lastName: item.lastName, dob:item.dob,dateValue: moment(item.dob), id:item.id, gender:item.gender });
     };
+    handleChangeGender(value) {
+        this.setState({ gender: value });
+    }
     handleOk(e) {
         this.setState({
             visible: false,
         });
-        const { firstName,middleName,lastName,dob,id } = this.state;
-        this.props.UpdateAddress({ firstName,middleName,lastName,dob,id }).then(r => this.props.refreshList());
+        const { firstName,middleName,lastName,dob,id,gender } = this.state;
+        this.props.UpdateAddress({ firstName,middleName,lastName,dob,id,gender }).then(r => this.props.refreshList());
     };
 
     handleCancel(e){
@@ -74,7 +79,7 @@ class AddressBookList extends Component {
         });
     };
     render() {
-        const { firstName, middleName, lastName } = this.state;
+        const { firstName, middleName, lastName,gender } = this.state;
         let columns = [
             {
                 title: 'Full Name',
@@ -144,6 +149,11 @@ class AddressBookList extends Component {
                         <Space size={10} direction="vertical">
                             <Input type="text" id="firstName" value={firstName} placeholder="First Name" onChange={this.handleFirstName} />
                             <Input type="text" id="middleName" value={middleName} placeholder="Middle Name" onChange={this.handleMiddleName} />
+                            <Select id="gender"  style={{width:'100%'}} placeholder="Gender" value={gender} onChange={this.handleChangeGender}>
+                                <Option value="Male">Male</Option>
+                                <Option value="Female">Female</Option>
+                                <Option value="Other">Other</Option>
+                            </Select>
                         </Space>
 
                         <Space size={10} direction="vertical">

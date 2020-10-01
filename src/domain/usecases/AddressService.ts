@@ -40,4 +40,9 @@ export class AddressServiceImpl implements AddressRepository {
       return this.itemRepo.UpdateAddress(item);
     }
   }
+
+  async UploadAvatar(imageFile:any) {
+      return await this.itemRepo.UploadAvatar(imageFile);
+  }
+
 }

@@ -11,6 +11,7 @@ class AddressBookDTO {
   dob: string = "";
   age: number = 0;
   gender: string = "";
+  avatarUrl: string = ""
 
 }
 const config = {
@@ -25,6 +26,7 @@ const config = {
 }
 firebase.initializeApp(config);
 let db = firebase.firestore();
+const storage = firebase.storage()
 const STORAGE_NAME = "AddressBook";
 
 
@@ -37,7 +39,7 @@ export class AddressRepositoryImpl implements AddressRepository {
         return { id: doc.id, ...doc.data() }
       })
     })
-    return itemArray.map((item: AddressBookDTO) => new AddressBook(item.id,item.fullName, item.firstName, item.lastName, item.middleName, item.dob, item.age,item.gender));
+    return itemArray.map((item: AddressBookDTO) => new AddressBook(item.id,item.fullName, item.firstName, item.lastName, item.middleName, item.dob, item.age,item.gender,item.avatarUrl));
   }
 
   async AddAddress(item:AddressBook) {
@@ -63,6 +65,14 @@ export class AddressRepositoryImpl implements AddressRepository {
     .catch((err: any)=>{
       alert(err)
     })
+  }
+
+  async UploadAvatar(imageAsFile: any){
+    let url =await storage.ref(`/images/${imageAsFile.name}`).put(imageAsFile)
+        .then( (data: { ref: { getDownloadURL: () => any; }; }) => {
+          return data.ref.getDownloadURL()
+        })
+    return url
   }
 
 }

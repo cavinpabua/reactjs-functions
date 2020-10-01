@@ -45,3 +45,17 @@ export const UpdateAddress = async (todo) => {
     alert(error);
   }
 };
+
+export const UploadAvatar = async (payload) => {
+  try {
+    const todoRepo = new AddressRepositoryImpl();
+    const todoService = new AddressServiceImpl(todoRepo);
+    let response = ""
+    await todoService.UploadAvatar(payload.file).then(resp =>{
+      response = resp
+    });
+    return { type: LIST_LOAD_SUCCESS, url:response };
+  } catch (error) {
+    console.log(error)
+  }
+}

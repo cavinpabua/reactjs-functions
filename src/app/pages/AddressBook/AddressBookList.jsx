@@ -1,9 +1,29 @@
 import React, { Component }  from "react";
 import { connect } from "react-redux";
-import { refreshList,deleteAddress,UpdateAddress } from "./AddressBook.actions";
-import {Table, Space, Button, Input, DatePicker, Modal, Select} from "antd";
+import { refreshList,deleteAddress,UpdateAddress,UploadAvatar } from "./AddressBook.actions";
+import {Table, Space, Button, Input, DatePicker, Modal, Select, Avatar, Upload, message} from "antd";
 import moment from "moment";
+import ImgCrop from "antd-img-crop";
+import {LoadingOutlined, PlusOutlined} from "@ant-design/icons";
 const { Option } = Select;
+
+function getBase64(img, callback) {
+    const reader = new FileReader();
+    reader.addEventListener('load', () => callback(reader.result));
+    reader.readAsDataURL(img);
+}
+
+function beforeUpload(file) {
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+    if (!isJpgOrPng) {
+        message.error('You can only upload JPG/PNG file!');
+    }
+    const isLt2M = file.size / 1024 / 1024 < 2;
+    if (!isLt2M) {
+        message.error('Image must smaller than 2MB!');
+    }
+    return isJpgOrPng && isLt2M;
+}
 
 class AddressBookList extends Component {
 
@@ -20,7 +40,9 @@ class AddressBookList extends Component {
             fullName: "",
             dob:"",
             dateValue: "",
-            gender:""
+            loading: false,
+            gender:"",
+            avatarUrl:""
         };
 
         this.handleClick = this.handleClick.bind(this);
@@ -33,6 +55,27 @@ class AddressBookList extends Component {
         this.handleChangeDate = this.handleChangeDate.bind(this);
         this.handleChangeGender = this.handleChangeGender.bind(this);
     }
+    customUpload = async ({ onError, onSuccess, file }) => {
+        let url = await this.props.UploadAvatar({ file });
+        this.setState({ avatarUrl: url.url });
+        onSuccess(null, url);
+    }
+    handleUpload = info => {
+        if (info.file.status === 'uploading') {
+            this.setState({ loading: true });
+            return;
+        }
+
+        if (info.file.status === 'done') {
+            // Get this url from response in real world.
+            getBase64(info.file.originFileObj, imageUrl =>
+                this.setState({
+                    imageUrl,
+                    loading: false,
+                }),
+            );
+        }
+    };
     componentDidMount() {
         this.props.refreshList();
     }
@@ -60,7 +103,7 @@ class AddressBookList extends Component {
         this.setState({
             visible: true,
         });
-        this.setState({ firstName: item.firstName, middleName: item.middleName, lastName: item.lastName, dob:item.dob,dateValue: moment(item.dob), id:item.id, gender:item.gender });
+        this.setState({ firstName: item.firstName, middleName: item.middleName, lastName: item.lastName, dob:item.dob,dateValue: moment(item.dob), id:item.id, gender:item.gender,avatarUrl:item.avatarUrl });
     };
     handleChangeGender(value) {
         this.setState({ gender: value });
@@ -69,8 +112,8 @@ class AddressBookList extends Component {
         this.setState({
             visible: false,
         });
-        const { firstName,middleName,lastName,dob,id,gender } = this.state;
-        this.props.UpdateAddress({ firstName,middleName,lastName,dob,id,gender }).then(r => this.props.refreshList());
+        const { firstName,middleName,lastName,dob,id,gender,avatarUrl } = this.state;
+        this.props.UpdateAddress({ firstName,middleName,lastName,dob,id,gender,avatarUrl }).then(r => this.props.refreshList());
     };
 
     handleCancel(e){
@@ -79,8 +122,37 @@ class AddressBookList extends Component {
         });
     };
     render() {
-        const { firstName, middleName, lastName,gender } = this.state;
+        const { firstName, middleName, lastName, gender, loading,avatarUrl } = this.state;
+        const uploadButton = (
+            <div>
+                {loading ? <LoadingOutlined /> : <PlusOutlined />}
+                <div style={{ marginTop: 8 }}>Upload</div>
+            </div>
+        );
+
+        const onPreview = async file => {
+            let src = file.url;
+            if (!src) {
+                src = await new Promise(resolve => {
+                    const reader = new FileReader();
+                    reader.readAsDataURL(file.originFileObj);
+                    reader.onload = () => resolve(reader.result);
+                });
+            }
+            const image = new Image();
+            image.src = src;
+            const imgWindow = window.open(src);
+            imgWindow.document.write(image.outerHTML);
+        };
         let columns = [
+            {
+                title: 'Avatar',
+                dataIndex: 'avatarUrl',
+                key: 'avatarUrl',
+                render: (text, record) => (
+                    <Avatar size={64} src={record.avatarUrl}></Avatar>
+                ),
+            },
             {
                 title: 'Full Name',
                 dataIndex: 'fullName',
@@ -147,6 +219,23 @@ class AddressBookList extends Component {
                 >
                     <Space size={10}>
                         <Space size={10} direction="vertical">
+                            <ImgCrop rotate>
+                                <Upload
+                                    name="avatar"
+                                    listType="picture-card"
+                                    multiple={false}
+                                    className="avatar-uploader"
+                                    showUploadList={false}
+                                    onPreview={onPreview}
+                                    customRequest={this.customUpload}
+                                    beforeUpload={beforeUpload}
+                                    onChange={this.handleUpload}
+                                >
+                                    {avatarUrl ? <img src={avatarUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+                                </Upload>
+                            </ImgCrop>
+                        </Space>
+                        <Space size={10} direction="vertical">
                             <Input type="text" id="firstName" value={firstName} placeholder="First Name" onChange={this.handleFirstName} />
                             <Input type="text" id="middleName" value={middleName} placeholder="Middle Name" onChange={this.handleMiddleName} />
                             <Select id="gender"  style={{width:'100%'}} placeholder="Gender" value={gender} onChange={this.handleChangeGender}>
@@ -184,6 +273,10 @@ const mapDispatchToProps = dispatch => ({
     }),
     UpdateAddress: todo => UpdateAddress(todo).then((resp) =>{
         dispatch(refreshList)
+    }),
+    UploadAvatar: (payload) => UploadAvatar(payload).then((resp) =>{
+        dispatch(refreshList)
+        return resp
     })
 });
 

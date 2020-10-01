@@ -20,7 +20,7 @@ const App = () => {
       <Layout>
         <Router>
           <Header>
-            <Menu theme="dark" mode="horizontal" defaultSelectedKeys={["1"]}>
+            <Menu theme="dark" mode="horizontal">
               <Menu.Item key="1" icon={<UserOutlined />}>
                 <Link to="/">Entry List</Link>
               </Menu.Item>

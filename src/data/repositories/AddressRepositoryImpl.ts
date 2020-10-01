@@ -9,12 +9,16 @@ class AddressBookDTO {
   dob: string = "";
   age: number = 0;
   gender: string = "";
+  avatarUrl:string = "";
 
 }
 
 const STORAGE_NAME = "AddressBook";
 
 export class AddressRepositoryImpl implements AddressRepository {
+  UploadAvatar(imageFile: any) {
+      throw new Error("Method not implemented.");
+  }
   localStorageGet(name: string) {
     let item= localStorage.getItem(name);
     if (item !== null){
@@ -33,7 +37,7 @@ export class AddressRepositoryImpl implements AddressRepository {
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     let itemArray = JSON.parse(<string>this.localStorageGet(STORAGE_NAME))
     if (!this.isEmpty(itemArray)) {
-      return itemArray.obj.map((item: AddressBookDTO) => new AddressBook(item.id,item.fullName, item.firstName, item.lastName, item.middleName, item.dob, item.age,item.gender));
+      return itemArray.obj.map((item: AddressBookDTO) => new AddressBook(item.id,item.fullName, item.firstName, item.lastName, item.middleName, item.dob, item.age,item.gender,item.avatarUrl));
     }
 
   }
@@ -52,7 +56,7 @@ export class AddressRepositoryImpl implements AddressRepository {
       this.localStorageSet(STORAGE_NAME,JSON.stringify(itemArray))
     }
 
-    return itemArray['obj'].map((item: AddressBookDTO) => new AddressBook(item.id,item.fullName, item.firstName, item.lastName, item.middleName, item.dob, item.age,item.gender));
+    return itemArray['obj'].map((item: AddressBookDTO) => new AddressBook(item.id,item.fullName, item.firstName, item.lastName, item.middleName, item.dob, item.age,item.gender, item.avatarUrl));
   }
 
   DeleteAddress(id: string) {

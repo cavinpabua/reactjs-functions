@@ -5,4 +5,5 @@ export interface AddressRepository {
   AddAddress(AddressBook:any):any;
   DeleteAddress(id:string):any;
   UpdateAddress(AddressBook:any):any;
+  UploadAvatar(imageFile:any):any;
 }

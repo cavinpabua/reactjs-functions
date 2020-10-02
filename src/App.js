@@ -2,56 +2,47 @@ import React from "react";
 import { Provider } from "react-redux";
 import { createStore, combineReducers, applyMiddleware } from "redux";
 import thunk from "redux-thunk";
-import ItemList from "./app/pages/AddressBook/AddressBookList";
+import Protected from "./app/pages/Protected/Protected";
+import Public from "./app/pages/Public/Public";
+import RegisterForm from "./app/pages/Public/RegisterForm"
+import LoginForm from "./app/pages/Public/LoginForm";
+import ChangePassword from "./app/pages/Protected/ChangePassword";
+import AddressBookList from "./app/pages/AddressBook/AddressBookList";
 import ReportList from "./app/pages/Report/ReportList";
-
-import ItemForm from "./app/pages/AddressBook/AddressBookForm";
 import items from "./app/pages/AddressBook/AddressBook.reducers";
-import { Layout, Row, Col, Menu } from "antd";
-import { UserOutlined, BarChartOutlined } from "@ant-design/icons";
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
-const { Content, Header } = Layout;
-// Setup Redux store with Thunks
-const reducers = combineReducers({ items });
-const store = createStore(reducers, applyMiddleware(thunk));
+import protectedReducer from "./app/pages/Protected/Protected.reducers";
+import { persistStore, persistReducer } from "redux-persist";
+import { PersistGate } from "redux-persist/integration/react";
+import storage from "redux-persist/lib/storage";
+import { Layout } from "antd";
+import {BrowserRouter as Router, Redirect, Switch} from "react-router-dom";
+const reducers = combineReducers({ items,protectedReducer });
+const persistConfig = {
+  key: "root",
+  storage,
+};
+const persistedReducer = persistReducer(persistConfig, reducers);
+
+
+let store = createStore(persistedReducer, applyMiddleware(thunk));
+let persistor = persistStore(store);
 const App = () => {
   return (
     <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
       <Layout>
         <Router>
-          <Header>
-            <Menu theme="dark" mode="horizontal">
-              <Menu.Item key="1" icon={<UserOutlined />}>
-                <Link to="/">Entry List</Link>
-              </Menu.Item>
-              <Menu.Item key="2" icon={<BarChartOutlined />}>
-                <Link to="/report">Statistics</Link>
-              </Menu.Item>
-            </Menu>
-          </Header>
-
-          <Route path="/" exact>
-            <Content style={{ marginTop: "100px", marginBottom: "100px" }}>
-              <Row justify="space-around">
-                <Col span={20} style={{ textAlign: "center" }}>
-                  <ItemList />
-                  <br />
-                  <ItemForm />
-                </Col>
-              </Row>
-            </Content>
-          </Route>
-          <Route path="/report" exact>
-            <Content style={{ marginTop: "100px", marginBottom: "100px" }}>
-              <Row justify="space-around">
-                <Col span={20} style={{ textAlign: "center" }}>
-                  <ReportList />
-                </Col>
-              </Row>
-            </Content>
-          </Route>
+          <Switch>
+            <Public path="/" exact component={LoginForm}/>
+            <Public path="/register" exact component={RegisterForm}/>
+            <Protected exact path="/list" component={AddressBookList} />
+            <Protected exact path="/statistics" component={ReportList} />
+            <Protected exact path="/settings" component={ChangePassword} />
+            <Redirect from="*" to="/" />
+          </Switch>
         </Router>
       </Layout>
+      </PersistGate>
     </Provider>
   );
 };

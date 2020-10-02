@@ -46,6 +46,9 @@ functions.logger.log(snap.after.data());
     return db.collection(REPORT_NAME).doc("genders").get()
         .then(docSnap=>{
                let docRef = docSnap.ref
+                if (genderAfter === genderBefore){
+                    return docRef
+                }
               if (genderBefore === "Male") {
                 docRef.update({
                   'male': docSnap.data().male  - 1 || 0

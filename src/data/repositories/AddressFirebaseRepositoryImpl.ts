@@ -1,7 +1,7 @@
-import { AddressBook } from "../../domain/entities/AddressBook";
-import { AddressRepository } from "../../domain/repositories/AddressRepository";
-const firebase = require("firebase");
-require("firebase/firestore");
+import {AddressBook} from "../../domain/entities/AddressBook";
+import {AddressRepository} from "../../domain/repositories/AddressRepository";
+import {db,storage} from "./firebase";
+
 class AddressBookDTO {
   id: string= "";
   fullName: string = ""
@@ -14,23 +14,12 @@ class AddressBookDTO {
   avatarUrl: string = ""
 
 }
-const config = {
-  apiKey: "AIzaSyCAJSx8GBpOBTmEg52aokmYDNuEg3i216k",
-  authDomain: "reactjs-todo-3cf00.firebaseapp.com",
-  databaseURL: "https://reactjs-todo-3cf00.firebaseio.com",
-  projectId: "reactjs-todo-3cf00",
-  storageBucket: "reactjs-todo-3cf00.appspot.com",
-  messagingSenderId: "496710522937",
-  appId: "1:496710522937:web:ecdc3f75bfb69ca8ca15e8",
-  measurementId: "G-KD0TJWQVSZ"
-}
-firebase.initializeApp(config);
-let db = firebase.firestore();
-const storage = firebase.storage()
+
 const STORAGE_NAME = "AddressBook";
 
 
 export class AddressRepositoryImpl implements AddressRepository {
+
 
   async GetAddress(): Promise<AddressBook[]>{
     let dataRef = db.collection(STORAGE_NAME)
@@ -68,11 +57,10 @@ export class AddressRepositoryImpl implements AddressRepository {
   }
 
   async UploadAvatar(imageAsFile: any){
-    let url =await storage.ref(`/images/${imageAsFile.name}`).put(imageAsFile)
-        .then( (data: { ref: { getDownloadURL: () => any; }; }) => {
+    return await storage.ref(`/images/${imageAsFile.name}`).put(imageAsFile)
+        .then((data: { ref: { getDownloadURL: () => any; }; }) => {
           return data.ref.getDownloadURL()
         })
-    return url
   }
 
 }

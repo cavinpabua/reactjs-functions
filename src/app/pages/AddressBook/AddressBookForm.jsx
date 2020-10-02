@@ -166,6 +166,7 @@ class ItemList extends Component {
                             <DatePicker type="text" id="dob" ref="datePicker" style={{width:'100%'}} value={this.state.dateValue}  selected={this.state.dob}  placeholder="Date of Birth" onChange={this.handleChangeDate} />
                         </Col>
                     </Row>
+
                 </Row>
                 <br/>
                 <Button type="primary" onClick={this.handleSubmit}>Add Item</Button>

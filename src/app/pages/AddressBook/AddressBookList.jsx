@@ -4,6 +4,7 @@ import { refreshList,deleteAddress,UpdateAddress,UploadAvatar } from "./AddressB
 import {Table, Space, Button, Input, DatePicker, Modal, Select, Avatar, Upload, message} from "antd";
 import moment from "moment";
 import ImgCrop from "antd-img-crop";
+import AddressBookForm from "./AddressBookForm"
 import {LoadingOutlined, PlusOutlined} from "@ant-design/icons";
 const { Option } = Select;
 
@@ -251,6 +252,8 @@ class AddressBookList extends Component {
                         </Space>
                     </Space>
                 </Modal>
+                <br/>
+                <AddressBookForm />
             </div>
         )
 

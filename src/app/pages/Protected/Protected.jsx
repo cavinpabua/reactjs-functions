@@ -5,7 +5,7 @@ import { sessionCheck, Logout } from "./Protected.actions";
 import {Layout, Menu,Row, Col,} from "antd";
 import {BarChartOutlined, UserOutlined,LogoutOutlined,SettingOutlined} from "@ant-design/icons";
 const { Content, Header } = Layout;
-function Protected({ component: Component, auth, ...rest }) {
+const   Protected =({ component: Component, Logout, auth, ...rest }) => {
     let history = useHistory()
     const logout = errorInfo => {
         Logout().then(message => {
@@ -57,9 +57,7 @@ const mapDispatchToProps = dispatch => ({
     sessionCheck: () => dispatch(sessionCheck).then(()=>{
         dispatch(sessionCheck)
     }),
-    Logout: () => dispatch(Logout).then(()=>{
-        dispatch(Logout)
-    })
+    Logout: () => dispatch(Logout()),
 });
 const mapStateToProps = (state) => ({
     auth: state.protectedReducer,

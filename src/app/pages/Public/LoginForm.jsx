@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import {Login} from "./Public.actions";
 import { Form, Input, Button,Alert } from 'antd';
 import {useHistory} from "react-router-dom";
-const LoginForm = ({auth}) => {
+const LoginForm = ({auth, Login}) => {
     let history = useHistory()
     const [values, setValues ] = React.useState({
         identifier: "",
@@ -28,7 +28,6 @@ const LoginForm = ({auth}) => {
     const onFinish =async values => {
 
         await Login(values).then(message => {
-            console.log(message)
             if(message === "success") {
                 setValues({ status:"success", errMessage: "",identifier:"", password:""});
                 form.resetFields()
@@ -82,9 +81,7 @@ const LoginForm = ({auth}) => {
 
 }
 const mapDispatchToProps = dispatch => ({
-    Login: () => dispatch(Login).then(()=>{
-        dispatch(Login)
-    })
+    Login: (values) => dispatch(Login(values)),
 });
 
 const mapStateToProps = (state) => ({

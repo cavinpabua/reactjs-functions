@@ -2,6 +2,7 @@
 
 ## Setup
 Replace firebase details inside `src/data/repositories/firebase.ts`
+You need Blaze Plan to deploy Cloud Functions inside `functions` folder. 
 
 This boilerplate includes: 
 1. Simple Authentication (Login and Register)

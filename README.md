@@ -1,5 +1,12 @@
 # react_js_clean_architecture
 
+## Setup
+Replace firebase details inside `src/data/repositories/firebase.ts`
+
+This boilerplate includes: 
+1. Simple Authentication (Login and Register)
+2. CRUD Entry List with File Upload (image)
+
 ## Overview
 A React JS boilerplate that makes it easy and intuitive to implement [Uncle Bob's Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) in react js. This boilerplate provides basic structure that are designed according to the Clean Architecture.
 

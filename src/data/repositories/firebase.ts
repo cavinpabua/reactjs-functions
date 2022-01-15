@@ -1,6 +1,8 @@
 const firebase = require("firebase");
 require("firebase/firestore");
 
+// This config is just a sample to test out the sample immediately.
+// Replace with your own firebase configuration
 const config = {
     apiKey: "AIzaSyCAJSx8GBpOBTmEg52aokmYDNuEg3i216k",
     authDomain: "reactjs-todo-3cf00.firebaseapp.com",
